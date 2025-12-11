@@ -190,6 +190,9 @@ export function ChatWindow(props: {
     Record<string, any>
   >({});
 
+  console.log("展示state", sourcesForMessages);
+
+
   const chat = useChat({
     api: props.endpoint,
     /**
