@@ -108,16 +108,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log("变量", {
-      a: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      b: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    });
-
-
     // 创建 Supabase 客户端（这里用 service_role 或 private key，权限最高）
     const client = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     // 创建用于生成向量（embedding）的模型，同样走火山方舟
