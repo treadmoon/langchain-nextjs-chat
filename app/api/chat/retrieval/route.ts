@@ -117,16 +117,25 @@ export async function POST(req: NextRequest) {
     // 创建 Supabase 客户端（这里用 service_role 或 private key，权限最高）
     const client = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     // 创建用于生成向量（embedding）的模型，同样走火山方舟
+    // const embeddings = new OpenAIEmbeddings({
+    //   openAIApiKey: process.env.HUOSHAN_API_KEY, // 火山引擎的 API 密钥
+    //   configuration: {
+    //     baseURL: "https://ark.cn-beijing.volces.com/api/v3", // 火山引擎的 API 端点
+    //   },
+    //   modelName: "doubao-embedding-text-240715", // 替换为豆包支持的嵌入模型名称
+    // });
+
     const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.HUOSHAN_API_KEY,
+      openAIApiKey: process.env.QWEN_API_KEY, //  
       configuration: {
-        baseURL: "https://ark.cn-beijing.volces.com/api/v3",
+        baseURL: "https://api.siliconflow.cn/v1/embeddings", //  
       },
-      modelName: "doubao-embedding-large-text-250515",
+      modelName: "qwen3-rerank",
+      dimensions: 1024
     });
 
     // 连接到 Supabase 的向量表

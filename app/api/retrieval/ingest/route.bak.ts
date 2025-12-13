@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
@@ -6,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
-// export const runtime = "edge";
+export const runtime = "edge";
 
 // Before running, follow set-up instructions at
 // https://js.langchain.com/v0.2/docs/integrations/vectorstores/supabase
@@ -36,8 +35,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_PRIVATE_KEY!,
     );
 
     const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
@@ -47,29 +46,9 @@ export async function POST(req: NextRequest) {
 
     const splitDocuments = await splitter.createDocuments([text]);
 
-    console.log("【splitDocuments:】", splitDocuments);
-
-
-    // 向量库模型
-    // const embeddings = new OpenAIEmbeddings({
-    //   openAIApiKey: process.env.HUOSHAN_API_KEY, // 火山引擎的 API 密钥
-    //   configuration: {
-    //     baseURL: "https://ark.cn-beijing.volces.com/api/v3", // 火山引擎的 API 端点
-    //   },
-    //   modelName: "doubao-embedding-text-240715", // 替换为豆包支持的嵌入模型名称
-    // });
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.QWEN_API_KEY, //  
-      configuration: {
-        baseURL: "https://dashscope.aliyuncs.com/api/v1/services/rerank/text-rerank/text-rerank", //  
-      },
-      modelName: "qwen3-rerank",
-      dimensions: 1024
-    });
-
     const vectorstore = await SupabaseVectorStore.fromDocuments(
       splitDocuments,
-      embeddings,
+      new OpenAIEmbeddings(),
       {
         client,
         tableName: "documents",
